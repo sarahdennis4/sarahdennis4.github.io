@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+import codecademylib3
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+students = pd.read_csv('students.csv')
+
+print(students.head())
+print(students.describe(include='all'))
+
+math_grade_mean = students.math_grade.mean()
+print(math_grade_mean)
+math_grade_med = students.math_grade.median()
+print(math_grade_med)
+math_grade_mode = students.math_grade.mode()
+print(math_grade_mode)
+mg_range = students.math_grade.max() - students.math_grade.min()
+print(mg_range)
+mg_std = students.math_grade.std()
+print(mg_std)
+mg_mad = students.math_grade.mad()
+print(mg_mad)
+sns.histplot(x='math_grade', data=students)
+plt.show()
+plt.clf()
+
+sns.boxplot(x='math_grade', data=students)
+plt.show()
+plt.clf()
+
+print(students.Mjob.value_counts())
+print(students.Mjob.value_counts(normalize=True))
+sns.countplot(x='Mjob', data=students)
+plt.show()
+plt.clf()
+
+students.Mjob.value_counts().plot.pie()
+plt.show()
+plt.clf()
