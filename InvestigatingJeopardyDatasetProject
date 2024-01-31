@@ -1,0 +1,40 @@
+import pandas as pd
+pd.set_option('display.max_colwidth', None)
+
+jeopardy = pd.read_csv('jeopardy.csv')
+print(jeopardy.columns)
+
+jeopardy = jeopardy.rename(columns= {
+    'Show Number': 'show_number',
+    ' Air Date': 'air_date',
+    ' Round': 'round',
+    ' Category': 'category',
+    ' Value': 'value',
+    ' Question': 'question',
+    ' Answer': 'answer'
+})
+print(jeopardy.columns)
+print(jeopardy.answer)
+
+def filter_data(data, words):
+    filter = lambda x: all(word in x for word in words)
+    return data.loc[data.question.apply(filter)]
+
+filtered_data = filter_data(jeopardy, ['King', 'England'])
+print(filtered_data.question)
+
+def filter_data(data, words):
+    filter = lambda x: all(word.lower() in x.lower() for word in words)
+    return data.loc[data.question.apply(filter)]
+
+filtered_data = filter_data(jeopardy, ['King', 'England'])
+print(filtered_data.question)
+
+jeopardy['float_value'] = jeopardy.value.apply(lambda x: float(x[1:].replace(',', '')) if x != 'None' else 0)
+filtered = filter_data(jeopardy, 'King')
+print(filtered.float_value.mean())
+
+def count_unique_answers(data):
+    return data.answer.value_counts()
+
+print(count_unique_answers(filtered))
