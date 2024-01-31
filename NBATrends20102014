@@ -1,0 +1,66 @@
+import pandas as pd
+import numpy as np
+from scipy.stats import pearsonr, chi2_contingency
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+#making it prettier to look at
+np.set_printoptions(suppress=True, precision = 2)
+nba = pd.read_csv('nba_games.csv')
+nba.head()
+
+#creating two smaller subsets for easier analysis
+nba_2010 = nba[nba.year_id == 2010]
+nba_2014 = nba[nba.year_id == 2014]
+
+#knicks v nets 2010
+knicks_pts = nba_2010.pts[nba_2010.fran_id == 'Knicks']
+nets_pts = nba_2010.pts[nba_2010.fran_id == 'Nets']
+diff_means_2010 = knicks_pts.mean() - nets_pts.mean()
+print('Difference b/w teams avg pts: ' + str(diff_means_2010))
+
+plt.hist(knicks_pts, color = 'orange', label = 'Knicks Pts', density = True, alpha = 0.5)
+plt.hist(nets_pts, color = 'black', label = 'Nets Pts', density = True, alpha = 0.5)
+plt.legend()
+plt.show()
+plt.clf()
+
+#knicks v nets 2014
+knicks_pts_2014 = nba_2014.pts[nba_2014.fran_id == 'Knicks']
+nets_pts_2014 = nba_2014.pts[nba_2014.fran_id == 'Nets']
+diff_means_2014 = knicks_pts_2014.mean() - nets_pts_2014.mean()
+print('Difference b/w teams avg pts in 2014: ' + str(diff_means_2014))
+
+plt.hist(knicks_pts_2014, color = 'orange', label = 'Knicks Pts', density = True, alpha = 0.5)
+plt.hist(nets_pts_2014, color = 'black', label = 'Nets Pts', density = True, alpha = 0.5)
+plt.legend()
+plt.show()
+plt.clf()
+
+#2010 franchises / points
+sns.boxplot(data = nba_2010, y = 'pts', x = 'fran_id')
+plt.show()
+plt.clf()
+
+#2010 location game outcome
+location_result_freq = pd.crosstab(nba_2010.game_result, nba_2010.game_location)
+print(location_result_freq)
+location_result_proportions = location_result_freq / len(nba_2010)
+print(location_result_proportions)
+chi2, pval, dof, expected = chi2_contingency(location_result_freq)
+print(np.round(expected))
+print(chi2)
+
+#point diff forecast
+cov_mat_forecast_pointdiff = np.cov(nba_2010.forecast, nba_2010.point_diff)
+print(cov_mat_forecast_pointdiff)
+
+cov_forecast_pointdiff = 1.37
+point_diff_forecast_corr = pearsonr(nba_2010.forecast, nba_2010.point_diff)
+print(point_diff_forecast_corr)
+
+plt.clf()
+plt.scatter(x = nba_2010.forecast, y = nba_2010.point_diff)
+plt.xlabel('Forecast')
+plt.ylabel('Point Difference')
+plt.show()
